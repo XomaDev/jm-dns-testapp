@@ -15,16 +15,19 @@ import javax.jmdns.ServiceInfo
 class JmDnsCreator {
   companion object {
     private var jmDNS: JmDNS? = null
+    var localPort = 0
 
     fun init(context: Context): JmDNS {
       val threadpool = Executors.newCachedThreadPool()
       val futureTask: Future<JmDNS> = threadpool.submit(Callable {
+        val address = InetAddress.getByAddress(
+          getIpv4(context)
+        )
         val jmDNS = JmDNS.create(
-          InetAddress.getByAddress(
-            getIpv4(context)
-          )
+         address
         )
         this.jmDNS = jmDNS
+        localPort = 1234
 
         // this will speed up the process
         jmDNS.registerService(
